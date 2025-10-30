@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+/* ``` */
+
+/* ### Step 4: Verify Your File Structure
+
+Your project should look like this:
+```
+yogesh-portfolio/
+├── node_modules/
+├── public/
+├── src/
+│   ├── App.jsx          ← Your portfolio code
+│   ├── index.css        ← Updated CSS
+│   └── main.jsx
+├── tailwind.config.js   ← CREATE THIS
+├── postcss.config.js    ← CREATE THIS
+├── package.json
+├── vite.config.js
+└── index.html */
