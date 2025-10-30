@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Github, Linkedin, Mail, ExternalLink, Code, Award, Briefcase, User, ChevronDown, Terminal, Sparkles } from 'lucide-react';
+import { Menu, X, Github, Linkedin, Mail, ExternalLink, Code, Award, Briefcase, User, ChevronDown, Terminal, Sparkles, Youtube, Twitter, Users } from 'lucide-react';
 
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSocialDropdownOpen, setIsSocialDropdownOpen] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [cursorVariant, setCursorVariant] = useState('default');
   const [particles, setParticles] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const socialDropdownRef = useRef(null);
   
   // Custom cursor effect
   useEffect(() => {
@@ -16,6 +18,17 @@ const Portfolio = () => {
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (socialDropdownRef.current && !socialDropdownRef.current.contains(event.target)) {
+        setIsSocialDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Generate particles
@@ -47,6 +60,30 @@ const Portfolio = () => {
     document.querySelectorAll('.observe-fade').forEach(el => observer.observe(el));
     return () => observer.disconnect();
   }, []);
+
+  const socialMediaLinks = [
+    {
+      name: "CodeTube",
+      icon: Youtube,
+      url: "https://codetubeapp.vercel.app/",
+      color: "from-red-500 to-red-600",
+      hoverColor: "hover:border-red-500/50"
+    },
+    {
+      name: "ChirpSpace",
+      icon: Twitter,
+      url: "https://chirpspaceapp.vercel.app/",
+      color: "from-blue-400 to-blue-500",
+      hoverColor: "hover:border-blue-500/50"
+    },
+    {
+      name: "LinkedIn",
+      icon: Linkedin,
+      url: "https://linkedinapp.vercel.app/",
+      color: "from-blue-600 to-blue-700",
+      hoverColor: "hover:border-blue-600/50"
+    }
+  ];
 
   const projects = [
     {
@@ -235,17 +272,52 @@ const Portfolio = () => {
               <Github size={20} />
               <span>GitHub</span>
             </a>
-            <a
-              href="www.linkedin.com/in/yogeshpalve37"
-              target="_blank"
-              rel="noopener noreferrer"
-              onMouseEnter={() => setCursorVariant('hover')}
-              onMouseLeave={() => setCursorVariant('default')}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg flex items-center space-x-2 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20"
-            >
-              <Linkedin size={20} />
-              <span>LinkedIn</span>
-            </a>
+
+            {/* Social Media Dropdown Button */}
+            <div className="relative" ref={socialDropdownRef}>
+              <button
+                onClick={() => setIsSocialDropdownOpen(!isSocialDropdownOpen)}
+                onMouseEnter={() => setCursorVariant('hover')}
+                onMouseLeave={() => setCursorVariant('default')}
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-lg flex items-center space-x-2 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30"
+              >
+                <Users size={20} />
+                <span>Social Media</span>
+                <ChevronDown size={16} className={`transition-transform duration-300 ${isSocialDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isSocialDropdownOpen && (
+                <div className="absolute top-full mt-2 w-56 bg-gray-800/95 backdrop-blur-md border border-gray-700 rounded-lg shadow-xl overflow-hidden z-50 animate-slide-down">
+                  {socialMediaLinks.map((social, index) => (
+                    <a
+                      key={index}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsSocialDropdownOpen(false)}
+                      onMouseEnter={() => setCursorVariant('hover')}
+                      onMouseLeave={() => setCursorVariant('default')}
+                      className={`flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 transition-all duration-300 border-b border-gray-700 last:border-b-0 ${social.hoverColor} group`}
+                    >
+                      <div className={`w-10 h-10 bg-gradient-to-br ${social.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                        <social.icon size={20} className="text-white" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-white group-hover:text-cyan-400 transition-colors">
+                          {social.name}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          Click to visit
+                        </div>
+                      </div>
+                      <ExternalLink size={14} className="ml-auto text-gray-500 group-hover:text-cyan-400 transition-colors" />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <a
               href="mailto:yogeshpalve037@gmail.com"
               onMouseEnter={() => setCursorVariant('hover')}
@@ -309,10 +381,9 @@ const Portfolio = () => {
                     <h3 className="text-2xl font-bold group-hover:text-cyan-400 transition-colors">
                       {project.title}
                     </h3>
-                    <a href="">
+                    <a href={project.link} target="_blank" rel="noopener noreferrer">
                       <ExternalLink size={20} className="text-gray-500 group-hover:text-cyan-400 transition-colors" />
                     </a>
-                    
                   </div>
 
                   <p className="text-gray-400 mb-4 text-sm">{project.description}</p>
@@ -471,7 +542,7 @@ const Portfolio = () => {
             </a>
 
             <a
-              href="www.linkedin.com/in/yogeshpalve37"
+              href="https://www.linkedin.com/in/yogeshpalve37"
               target="_blank"
               rel="noopener noreferrer"
               onMouseEnter={() => setCursorVariant('hover')}
@@ -535,6 +606,21 @@ const Portfolio = () => {
             opacity: 1;
             transform: translateY(0);
           }
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-slide-down {
+          animation: slideDown 0.3s ease-out forwards;
         }
 
         .observe-fade {
